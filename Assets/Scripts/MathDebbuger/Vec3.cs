@@ -12,7 +12,7 @@ namespace CustomMath
         public float z;
 
         public float sqrMagnitude { get { return (x * x + y * y + z * z); } }
-        public Vector3 normalized { get { return new Vec3(x * sqrMagnitude, y * sqrMagnitude, z * sqrMagnitude); } }
+        public Vec3 normalized { get { return new Vec3(x * sqrMagnitude, y * sqrMagnitude, z * sqrMagnitude); } }
         public float magnitude { get { return Mathf.Sqrt(x * x + y * y + z * z); } }
         #endregion
 
@@ -133,17 +133,14 @@ namespace CustomMath
         }
         public static float Angle(Vec3 from, Vec3 to)
         {
-            throw new NotImplementedException();
+            return Mathf.Acos(Vec3.Dot(from.normalized, to.normalized) * 180 / MathF.PI);
         }
+        //http://speace.chenjianqiu.ltd/unity2019_3/ScriptReference/Vector3.ClampMagnitude.html
         public static Vec3 ClampMagnitude(Vec3 vector, float maxLength)
         {
-            if (vector.magnitude > maxLength)
-            {
-
-                return vector*maxLength;
-            }
-                return vector;
+            return vector.magnitude > maxLength ? vector.normalized * maxLength : vector;
         }
+        //https://forum.unity.com/threads/sqrmagnitude-or-magnitude.80443/
         public static float Magnitude(Vec3 vector)
         {
             return Mathf.Sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
@@ -158,31 +155,43 @@ namespace CustomMath
         public static float Distance(Vec3 a, Vec3 b)
         {
 
-            float distX = a.x - b.x;
-            float distY = a.y - b.y;
-            float distZ = a.z - b.z;
+            float distX = b.x - a.x;
+            float distY = b.y - a.y;
+            float distZ = b.z - a.z;
 
             return Mathf.Sqrt((distX * distX) + (distY * distY) + (distZ * distZ));
         }
+        // http://www.sunshine2k.de/articles/coding/vectorreflection/vectorreflection.html#DotProduct
         public static float Dot(Vec3 a, Vec3 b)
         {
-            return 0;
+            return a.x * b.x + a.y * b.y + a.z * b.z;
         }
+        //http://speace.chenjianqiu.ltd/unity2019_3/ScriptReference/Vector3.Lerp.html
         public static Vec3 Lerp(Vec3 a, Vec3 b, float t)
         {
-            throw new NotImplementedException();
+            Vec3 direction = (b - a);
+            if (t < 0) t = 0;
+            if (t > 1) t = 1;
+            return a + (t * direction);
         }
         public static Vec3 LerpUnclamped(Vec3 a, Vec3 b, float t)
         {
-            throw new NotImplementedException();
+            Vec3 direction = (b - a);
+            return a + (t * direction);
         }
         public static Vec3 Max(Vec3 a, Vec3 b)
         {
-            throw new NotImplementedException();
+            float maxX = a.x > b.x ? a.x : b.x;
+            float maxY = a.y > b.y ? a.y : b.y;
+            float maxZ = a.z > b.z ? a.z : b.z;
+            return new Vec3(maxX, maxY, maxZ);
         }
         public static Vec3 Min(Vec3 a, Vec3 b)
         {
-            throw new NotImplementedException();
+            float minX = a.x < b.x ? a.x : b.x;
+            float minY = a.y < b.y ? a.y : b.y;
+            float minZ = a.z < b.z ? a.z : b.z;
+            return new Vec3(minX, minY, minZ);
         }
         public static float SqrMagnitude(Vec3 vector)
         {
@@ -190,11 +199,21 @@ namespace CustomMath
         }
         public static Vec3 Project(Vec3 vector, Vec3 onNormal)
         {
-            throw new NotImplementedException();
+            float sqrMag = Dot(onNormal, onNormal);
+            if (sqrMag < epsilon)
+            {
+                return Zero;
+            }
+            else
+            {
+                float dot = Dot(vector, onNormal);
+                return onNormal *dot /sqrMag;
+            }
+
         }
         public static Vec3 Reflect(Vec3 inDirection, Vec3 inNormal)
         {
-            throw new NotImplementedException();
+            return inDirection - 2 * (Dot(inDirection, inNormal)) * inNormal;
         }
         public void Set(float newX, float newY, float newZ)
         {
@@ -202,10 +221,14 @@ namespace CustomMath
             y = newY;
             z = newZ;
         }
+        //https://docs.unity3d.com/ScriptReference/Vector3.Scale.html
         public void Scale(Vec3 scale)
         {
-            throw new NotImplementedException();
+            x *= scale.x;
+            y *= scale.y;
+            z *= scale.z;
         }
+        //https://www.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-vectors/a/vector-magnitude-normalization#:~:text=To%20normalize%20a%20vector%2C%20therefore,the%20unit%20vector%20readily%20accessible.
         public void Normalize()
         {
             float mag = Magnitude(this);
