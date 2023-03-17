@@ -18,6 +18,13 @@ public class Test : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+    private void OnValidate()
+    {
+        firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
+        secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
+        Debug.Log(firstVec3.magnitude);
+        Debug.Log(firstVector3.magnitude);
     }
 }
