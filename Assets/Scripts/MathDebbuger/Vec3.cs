@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 namespace CustomMath
 {
+        [Serializable]
     public struct Vec3 : IEquatable<Vec3>
     {
         #region Variables
