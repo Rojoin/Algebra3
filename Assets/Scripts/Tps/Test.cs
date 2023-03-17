@@ -24,7 +24,23 @@ public class Test : MonoBehaviour
     {
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
+        CheckNormalize();
+    }
+    void CheckMagnitude()
+    {
         Debug.Log(firstVec3.magnitude);
         Debug.Log(firstVector3.magnitude);
     }
+    void CheckNormalize()
+    {
+        Debug.Log("Vec3 Normalized:"+firstVec3.normalized);
+        Debug.Log("Vector3 Normalized:"+firstVector3.normalized);
+        Vector3 exampleVector3 = firstVector3;
+        Vec3 exampleVec3 = firstVec3;
+        exampleVec3.Normalize();
+        exampleVector3.Normalize();
+        Debug.Log("Vec3 example Normalize:"+exampleVec3);
+        Debug.Log("Vector3 example Normalize:" + exampleVector3);
+    }
+
 }
