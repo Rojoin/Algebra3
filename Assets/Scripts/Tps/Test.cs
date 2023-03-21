@@ -30,6 +30,8 @@ public class Test : MonoBehaviour
     {
         Debug.Log(firstVec3.magnitude);
         Debug.Log(firstVector3.magnitude);
+        Debug.Log(firstVec3.sqrMagnitude);
+        Debug.Log(firstVector3.sqrMagnitude);
     }
     void CheckNormalize()
     {
@@ -42,5 +44,5 @@ public class Test : MonoBehaviour
         Debug.Log("Vec3 example Normalize:"+exampleVec3);
         Debug.Log("Vector3 example Normalize:" + exampleVector3);
     }
-
+    
 }
