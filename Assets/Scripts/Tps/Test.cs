@@ -9,6 +9,8 @@ public class Test : MonoBehaviour
     [SerializeField] Vec3 secondVec3;
     [SerializeField] Vector3 firstVector3;
     [SerializeField] Vector3 secondVector3;
+    [SerializeField] private float lerp;
+
     void Start()
     {
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
@@ -24,7 +26,7 @@ public class Test : MonoBehaviour
     {
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
-        CheckCross();
+        CheckClampMagnitude();
     }
     void CheckMagnitude()
     {
@@ -35,13 +37,13 @@ public class Test : MonoBehaviour
     }
     void CheckNormalize()
     {
-        Debug.Log("Vec3 Normalized:"+firstVec3.normalized);
-        Debug.Log("Vector3 Normalized:"+firstVector3.normalized);
+        Debug.Log("Vec3 Normalized:" + firstVec3.normalized);
+        Debug.Log("Vector3 Normalized:" + firstVector3.normalized);
         Vector3 exampleVector3 = firstVector3;
         Vec3 exampleVec3 = firstVec3;
         exampleVec3.Normalize();
         exampleVector3.Normalize();
-        Debug.Log("Vec3 example Normalize:"+exampleVec3);
+        Debug.Log("Vec3 example Normalize:" + exampleVec3);
         Debug.Log("Vector3 example Normalize:" + exampleVector3);
     }
     void CheckDot()
@@ -58,6 +60,18 @@ public class Test : MonoBehaviour
     {
         Debug.Log("Vec3 Cross:" + Vec3.Cross(firstVec3, secondVec3));
         Debug.Log("Vector3 Cross:" + Vector3.Cross(firstVector3, secondVector3));
+    }
+    void CheckLerp()
+    {
+        Debug.Log("Vec3 Lerp:" + Vec3.Lerp(firstVec3, secondVec3, lerp));
+        Debug.Log("Vector3 Lerp:" + Vector3.Lerp(firstVector3, secondVector3, lerp));
+        Debug.Log("Vec3 LerpUnclamped:" + Vec3.LerpUnclamped(firstVec3, secondVec3, lerp));
+        Debug.Log("Vector3 LerpUnclamped:" + Vector3.LerpUnclamped(firstVector3, secondVector3, lerp));
+    }
+    void CheckClampMagnitude()
+    {
+        Debug.Log("Vec3 ClampMag:" + Vec3.ClampMagnitude(firstVec3,lerp));
+        Debug.Log("Vector3 ClampMag:" + Vector3.ClampMagnitude(firstVector3, lerp));
     }
 
 
