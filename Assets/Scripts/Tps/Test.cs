@@ -24,7 +24,7 @@ public class Test : MonoBehaviour
     {
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
-        CheckAngle();
+        CheckCross();
     }
     void CheckMagnitude()
     {
@@ -54,5 +54,11 @@ public class Test : MonoBehaviour
         Debug.Log("Vec3 Angle:" + Vec3.Angle(firstVec3, secondVec3));
         Debug.Log("Vector3 Angle:" + Vector3.Angle(firstVector3, secondVector3));
     }
-    
+    void CheckCross()
+    {
+        Debug.Log("Vec3 Cross:" + Vec3.Cross(firstVec3, secondVec3));
+        Debug.Log("Vector3 Cross:" + Vector3.Cross(firstVector3, secondVector3));
+    }
+
+
 }
