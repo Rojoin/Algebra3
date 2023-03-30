@@ -26,7 +26,7 @@ public class Test : MonoBehaviour
     {
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
-        CheckDistance();
+        CheckProjection();
     }
     void CheckMagnitude()
     {
@@ -77,6 +77,11 @@ public class Test : MonoBehaviour
     {
         Debug.Log("Vec3 Distance:" + Vec3.Distance(firstVec3,secondVec3));
         Debug.Log("Vector3 Distance:" + Vector3.Distance(firstVector3, secondVector3));
+    }
+    void CheckProjection()
+    {
+        Debug.Log("Vec3 Project:" + Vec3.Project(firstVec3, secondVec3));
+        Debug.Log("Vector3 Project:" + Vector3.Project(firstVector3, secondVector3));
     }
 
 
