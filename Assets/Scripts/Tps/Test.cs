@@ -26,7 +26,7 @@ public class Test : MonoBehaviour
     {
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
-        CheckClampMagnitude();
+        CheckDistance();
     }
     void CheckMagnitude()
     {
@@ -72,6 +72,11 @@ public class Test : MonoBehaviour
     {
         Debug.Log("Vec3 ClampMag:" + Vec3.ClampMagnitude(firstVec3,lerp));
         Debug.Log("Vector3 ClampMag:" + Vector3.ClampMagnitude(firstVector3, lerp));
+    }
+    void CheckDistance()
+    {
+        Debug.Log("Vec3 Distance:" + Vec3.Distance(firstVec3,secondVec3));
+        Debug.Log("Vector3 Distance:" + Vector3.Distance(firstVector3, secondVector3));
     }
 
 
