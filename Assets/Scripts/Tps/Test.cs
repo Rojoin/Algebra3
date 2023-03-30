@@ -24,7 +24,7 @@ public class Test : MonoBehaviour
     {
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
-        CheckNormalize();
+        CheckAngle();
     }
     void CheckMagnitude()
     {
@@ -43,6 +43,16 @@ public class Test : MonoBehaviour
         exampleVector3.Normalize();
         Debug.Log("Vec3 example Normalize:"+exampleVec3);
         Debug.Log("Vector3 example Normalize:" + exampleVector3);
+    }
+    void CheckDot()
+    {
+        Debug.Log("Vec3 Dot" + Vec3.Dot(firstVec3, secondVec3));
+        Debug.Log("Vector3 Dor:" + Vector3.Dot(firstVector3, secondVector3));
+    }
+    void CheckAngle()
+    {
+        Debug.Log("Vec3 Angle:" + Vec3.Angle(firstVec3, secondVec3));
+        Debug.Log("Vector3 Angle:" + Vector3.Angle(firstVector3, secondVector3));
     }
     
 }
