@@ -104,16 +104,16 @@ namespace CustomMath
 
         public static Vec3 operator *(Vec3 v3, float scalar)
         {
-            return new Vec3(v3) * scalar;
+            return new Vec3(v3.x * scalar, v3.y * scalar, v3.z * scalar);
         }
         public static Vec3 operator *(float scalar, Vec3 v3)
         {
-            return new Vec3(v3) * scalar;
+            return new Vec3(v3.x * scalar, v3.y * scalar, v3.z * scalar);
 
         }
         public static Vec3 operator /(Vec3 v3, float scalar)
         {
-            return new Vec3(v3) / scalar;
+            return new Vec3(v3.x / scalar, v3.y / scalar, v3.z / scalar);
         }
 
         public static implicit operator Vector3(Vec3 v3)
@@ -175,12 +175,12 @@ namespace CustomMath
             Vec3 direction = (b - a);
             if (t < 0) t = 0;
             if (t > 1) t = 1;
-            return a + (t * direction);
+            return a + (  direction*t);
         }
         public static Vec3 LerpUnclamped(Vec3 a, Vec3 b, float t)
         {
             Vec3 direction = (b - a);
-            return a + (t * direction);
+            return a + ( direction*t );
         }
         public static Vec3 Max(Vec3 a, Vec3 b)
         {
