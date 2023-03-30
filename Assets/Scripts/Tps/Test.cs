@@ -26,7 +26,7 @@ public class Test : MonoBehaviour
     {
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
-        CheckProjection();
+        CheckReflect();
     }
     void CheckMagnitude()
     {
@@ -82,6 +82,11 @@ public class Test : MonoBehaviour
     {
         Debug.Log("Vec3 Project:" + Vec3.Project(firstVec3, secondVec3));
         Debug.Log("Vector3 Project:" + Vector3.Project(firstVector3, secondVector3));
+    }
+    void CheckReflect()
+    {
+        Debug.Log("Vec3 Reflect:" + Vec3.Reflect(firstVec3, secondVec3));
+        Debug.Log("Vector3 Reflect:" + Vector3.Reflect(firstVector3, secondVector3));
     }
 
 
