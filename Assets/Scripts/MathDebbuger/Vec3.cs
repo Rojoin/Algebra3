@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 namespace CustomMath
 {
-        [Serializable]
+    [Serializable]
     public struct Vec3 : IEquatable<Vec3>
     {
         #region Variables
@@ -132,9 +132,10 @@ namespace CustomMath
         {
             return "X = " + x.ToString() + "   Y = " + y.ToString() + "   Z = " + z.ToString();
         }
+        //https://answers.unity.com/questions/1294512/how-vectorangle-works-internally-in-unity.html
         public static float Angle(Vec3 from, Vec3 to)
         {
-            return Mathf.Acos(Vec3.Dot(from.normalized, to.normalized) * 180 / MathF.PI);
+            return Mathf.Acos(Mathf.Clamp(Dot(from.normalized, to.normalized), -1f, 1f)) * 180 / Mathf.PI;
         }
         //http://speace.chenjianqiu.ltd/unity2019_3/ScriptReference/Vector3.ClampMagnitude.html
         public static Vec3 ClampMagnitude(Vec3 vector, float maxLength)
@@ -165,6 +166,7 @@ namespace CustomMath
         // http://www.sunshine2k.de/articles/coding/vectorreflection/vectorreflection.html#DotProduct
         public static float Dot(Vec3 a, Vec3 b)
         {
+
             return a.x * b.x + a.y * b.y + a.z * b.z;
         }
         //http://speace.chenjianqiu.ltd/unity2019_3/ScriptReference/Vector3.Lerp.html
@@ -208,7 +210,7 @@ namespace CustomMath
             else
             {
                 float dot = Dot(vector, onNormal);
-                return onNormal *dot /sqrMag;
+                return onNormal * dot / sqrMag;
             }
 
         }
