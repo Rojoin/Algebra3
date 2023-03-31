@@ -18,6 +18,7 @@ namespace CustomMath
         #endregion
 
         #region constants
+        //Llegado a 0
         public const float epsilon = 1e-05f;
         #endregion
 
@@ -131,6 +132,7 @@ namespace CustomMath
             return "X = " + x.ToString() + "   Y = " + y.ToString() + "   Z = " + z.ToString();
         }
         //https://answers.unity.com/questions/1294512/how-vectorangle-works-internally-in-unity.html
+        //Dot nos da el coseno
         public static float Angle(Vec3 from, Vec3 to)
         {
             return Mathf.Acos(Mathf.Clamp(Dot(from.normalized, to.normalized), -1f, 1f)) * 180 / Mathf.PI;
@@ -164,7 +166,6 @@ namespace CustomMath
         // http://www.sunshine2k.de/articles/coding/vectorreflection/vectorreflection.html#DotProduct
         public static float Dot(Vec3 a, Vec3 b)
         {
-
             return a.x * b.x + a.y * b.y + a.z * b.z;
         }
         //http://speace.chenjianqiu.ltd/unity2019_3/ScriptReference/Vector3.Lerp.html
@@ -198,6 +199,7 @@ namespace CustomMath
         {
             return vector.x * vector.x + vector.y * vector.y + vector.z * vector.z;
         }
+        // EL dot nos da el coceno , lo multiplicamos por la normal  para llevarlo a esa altura y le modificamos su magnitude con la sqrMag
         public static Vec3 Project(Vec3 vector, Vec3 onNormal)
         {
             float sqrMag = Dot(onNormal, onNormal);
@@ -212,6 +214,9 @@ namespace CustomMath
             }
 
         }
+        //Vector choca con una normal y Conseguis la perpendicular al plano.
+        //Dot da el angulo y -2 nos da el doble del angulo mirando para el otro lado
+        //Al hacerlo por la normal del plano nos da el plano normaliza y despeus lo multiplicamos por el original para tener el reflejado
         public static Vec3 Reflect(Vec3 inDirection, Vec3 inNormal)
         {
             return inDirection - 2 * (Dot(inDirection, inNormal)) * inNormal;
