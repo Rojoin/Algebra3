@@ -2,19 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using CustomMath;
+using MathDebbuger;
+
 
 public class Test : MonoBehaviour
 {
-    [SerializeField] Vec3 firstVec3;
-    [SerializeField] Vec3 secondVec3;
-    [SerializeField] Vector3 firstVector3;
-    [SerializeField] Vector3 secondVector3;
-    [SerializeField] private float lerp;
+    [SerializeField] 
+    Vec3 firstVec3;
+    [SerializeField] 
+    Vec3 secondVec3;
+    [SerializeField] 
+    Vec3 aux;
+    [SerializeField] 
+    Vector3 firstVector3;
+    [SerializeField] 
+    Vector3 secondVector3;
+    [SerializeField] 
+    private float lerp;
 
+    [Range(1, 10)] public int exerciseNumber;
     void Start()
     {
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
+        //Vector3Debugger.AddVector(transform.position, firstVec3, Color.yellow, "face");
+        //Vector3Debugger.AddVector(transform.position, secondVec3, Color.green, "enzo");
+        //Vector3Debugger.AddVector(transform.position, aux, Color.black, "dario");
     }
 
     // Update is called once per frame
@@ -26,8 +39,66 @@ public class Test : MonoBehaviour
     {
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
-        CheckReflect();
+
     }
+    #region Exercices
+    void ExerciceOne()
+    {
+     
+        float t = 0.0f;
+        switch (exerciseNumber)
+        {
+            case 1:
+                Debug.Log(firstVec3 + secondVec3);
+                break;
+            case 2:
+                Debug.Log(firstVec3 - secondVec3);
+                break;
+            case 3:
+                aux = firstVec3;
+                aux.Scale(secondVec3);
+                Debug.Log(aux);
+                break;
+            case 4:
+                break;
+            case 5:
+                aux = firstVec3;
+
+                t += Time.deltaTime;
+                aux = Vec3.Lerp(firstVec3, secondVec3, t);
+                if (t > 1)
+                {
+                    t = 0;
+                }
+                Debug.Log(aux);
+                break;
+            case 6:
+                aux = Vec3.Max(firstVec3, secondVec3);
+                Debug.Log(aux);
+                break;
+            case 7:
+                break;
+            case 8:
+                break;
+            case 9:
+                break;
+            case 10:
+                aux = firstVec3;
+                t -= Time.deltaTime;
+                aux = Vec3.LerpUnclamped(firstVec3, secondVec3, t);
+                if (t < -3)
+                {
+                    t = 1;
+                }
+                Debug.Log(aux);
+                break;
+        }
+      
+    }
+
+
+    #endregion
+    #region Comparisons
     void CheckMagnitude()
     {
         Debug.Log(firstVec3.magnitude);
@@ -70,12 +141,12 @@ public class Test : MonoBehaviour
     }
     void CheckClampMagnitude()
     {
-        Debug.Log("Vec3 ClampMag:" + Vec3.ClampMagnitude(firstVec3,lerp));
+        Debug.Log("Vec3 ClampMag:" + Vec3.ClampMagnitude(firstVec3, lerp));
         Debug.Log("Vector3 ClampMag:" + Vector3.ClampMagnitude(firstVector3, lerp));
     }
     void CheckDistance()
     {
-        Debug.Log("Vec3 Distance:" + Vec3.Distance(firstVec3,secondVec3));
+        Debug.Log("Vec3 Distance:" + Vec3.Distance(firstVec3, secondVec3));
         Debug.Log("Vector3 Distance:" + Vector3.Distance(firstVector3, secondVector3));
     }
     void CheckProjection()
@@ -89,5 +160,5 @@ public class Test : MonoBehaviour
         Debug.Log("Vector3 Reflect:" + Vector3.Reflect(firstVector3, secondVector3));
     }
 
-
+    #endregion
 }
