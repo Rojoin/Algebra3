@@ -7,45 +7,56 @@ using MathDebbuger;
 
 public class Test : MonoBehaviour
 {
-    [SerializeField] 
+    [SerializeField]
     Vec3 firstVec3;
-    [SerializeField] 
+    [SerializeField]
     Vec3 secondVec3;
-    [SerializeField] 
+    [SerializeField]
     Vec3 aux;
-    [SerializeField] 
+    [SerializeField]
     Vector3 firstVector3;
-    [SerializeField] 
+    [SerializeField]
     Vector3 secondVector3;
-    [SerializeField] 
+    [SerializeField]
     private float lerp;
 
     [Range(1, 10)] public int exerciseNumber;
     void Start()
     {
+    
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
-        //Vector3Debugger.AddVector(transform.position, firstVec3, Color.yellow, "face");
-        //Vector3Debugger.AddVector(transform.position, secondVec3, Color.green, "enzo");
-        //Vector3Debugger.AddVector(transform.position, aux, Color.black, "dario");
+        Vector3Debugger.AddVector(firstVec3, Color.yellow, "A");
+        Vector3Debugger.AddVector(secondVec3, Color.green, "B");
+        Vector3Debugger.AddVector(aux, Color.black, "C");
+
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        ExerciceOne();
     }
     private void OnValidate()
     {
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
-
+        switch (exerciseNumber)
+        {
+            case 5:
+                lerp = 0;
+                break;
+            case 10:
+                lerp = 1;
+                break;
+        }
     }
     #region Exercices
     void ExerciceOne()
     {
-     
-        float t = 0.0f;
+
+        lerp = 0.0f;
         switch (exerciseNumber)
         {
             case 1:
@@ -60,15 +71,17 @@ public class Test : MonoBehaviour
                 Debug.Log(aux);
                 break;
             case 4:
+                aux = Vec3.Cross(firstVec3, secondVec3);
+                Debug.Log(aux);
+
                 break;
             case 5:
                 aux = firstVec3;
-
-                t += Time.deltaTime;
-                aux = Vec3.Lerp(firstVec3, secondVec3, t);
-                if (t > 1)
+                lerp += Time.deltaTime;
+                aux = Vec3.Lerp(firstVec3, secondVec3, lerp);
+                if (lerp > 1)
                 {
-                    t = 0;
+                    lerp = 0;
                 }
                 Debug.Log(aux);
                 break;
@@ -77,23 +90,33 @@ public class Test : MonoBehaviour
                 Debug.Log(aux);
                 break;
             case 7:
+                aux = Vec3.Project(firstVec3, secondVec3.normalized);
+                Debug.Log(aux);
                 break;
-            case 8:
+            case 8: // tangente entre el vector a y b
+                aux = Vec3.Reflect(firstVec3, secondVec3.normalized);
+                aux = -aux;
+                Debug.Log(aux);
                 break;
             case 9:
+                aux = Vec3.Reflect(firstVec3, secondVec3.normalized);
+                Debug.Log(aux);
                 break;
             case 10:
                 aux = firstVec3;
-                t -= Time.deltaTime;
-                aux = Vec3.LerpUnclamped(firstVec3, secondVec3, t);
-                if (t < -3)
+                lerp -= Time.deltaTime;
+                aux = Vec3.LerpUnclamped(firstVec3, secondVec3, lerp);
+                if (lerp < -10)
                 {
-                    t = 1;
+                    lerp = 1;
                 }
                 Debug.Log(aux);
                 break;
         }
-      
+        Vector3Debugger.UpdatePosition("A", firstVec3);
+        Vector3Debugger.UpdatePosition("B", secondVec3);
+        Vector3Debugger.UpdatePosition("C", aux);
+     
     }
 
 
