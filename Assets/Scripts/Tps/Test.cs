@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using CustomMath;
+using EjerciciosAlgebra;
 using MathDebbuger;
 
 
@@ -23,23 +24,36 @@ public class Test : MonoBehaviour
     [Range(1, 10)] public int exerciseNumber;
     void Start()
     {
-    
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
-        Vector3Debugger.AddVector(firstVec3, Color.yellow, "A");
-        Vector3Debugger.AddVector(secondVec3, Color.green, "B");
-        Vector3Debugger.AddVector(aux, Color.black, "C");
-
-        
+        List<Vector3> vectors = new List<Vector3>
+        {
+            new Vec3(10.0f, 0.0f, 0.0f),
+            new Vec3(10.0f, 10.0f, 0.0f),
+            new Vec3(20.0f, 10.0f, 0.0f),
+            new Vec3(20.0f, 20.0f, 0.0f)
+        };
+        Vector3Debugger.AddVector(firstVector3,Color.yellow,"Vector1");
+        Vector3Debugger.AddVector(secondVector3,Color.blue,"Vector2");
+        Vector3Debugger.AddVector(aux, Color.green,"Vector3");
+        Vector3Debugger.EnableEditorView("Vector1");
+        Vector3Debugger.EnableEditorView("Vector2");
+        Vector3Debugger.EnableEditorView("Vector3");
     }
 
     // Update is called once per frame
     void Update()
     {
         ExerciceOne();
+        Vector3Debugger.UpdatePosition("Vector1", firstVec3);
+        Vector3Debugger.UpdatePosition("Vector2", secondVec3);
+        Vector3Debugger.UpdatePosition("Vector3", aux);
     }
     private void OnValidate()
     {
+        Vector3Debugger.UpdatePosition("Vector1", firstVec3);
+        Vector3Debugger.UpdatePosition("Vector2", secondVec3);
+        Vector3Debugger.UpdatePosition("Vector3",aux);
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
         switch (exerciseNumber)
@@ -56,13 +70,15 @@ public class Test : MonoBehaviour
     void ExerciceOne()
     {
 
-        lerp = 0.0f;
+        
         switch (exerciseNumber)
         {
             case 1:
                 Debug.Log(firstVec3 + secondVec3);
+                aux = firstVec3 + secondVec3;
                 break;
             case 2:
+                aux = firstVec3 - secondVec3;
                 Debug.Log(firstVec3 - secondVec3);
                 break;
             case 3:
@@ -71,7 +87,7 @@ public class Test : MonoBehaviour
                 Debug.Log(aux);
                 break;
             case 4:
-                aux = Vec3.Cross(firstVec3, secondVec3);
+                aux = Vec3.Cross(secondVec3, firstVec3);
                 Debug.Log(aux);
 
                 break;
@@ -96,6 +112,9 @@ public class Test : MonoBehaviour
             case 8: // tangente entre el vector a y b
                 aux = Vec3.Reflect(firstVec3, secondVec3.normalized);
                 aux = -aux;
+                var num = Vector3.Distance(firstVec3, secondVec3);
+                aux = firstVec3 + secondVec3;
+                aux = num * aux.normalized;
                 Debug.Log(aux);
                 break;
             case 9:
@@ -103,7 +122,7 @@ public class Test : MonoBehaviour
                 Debug.Log(aux);
                 break;
             case 10:
-                aux = firstVec3;
+
                 lerp -= Time.deltaTime;
                 aux = Vec3.LerpUnclamped(firstVec3, secondVec3, lerp);
                 if (lerp < -10)
@@ -113,9 +132,7 @@ public class Test : MonoBehaviour
                 Debug.Log(aux);
                 break;
         }
-        Vector3Debugger.UpdatePosition("A", firstVec3);
-        Vector3Debugger.UpdatePosition("B", secondVec3);
-        Vector3Debugger.UpdatePosition("C", aux);
+
      
     }
 
