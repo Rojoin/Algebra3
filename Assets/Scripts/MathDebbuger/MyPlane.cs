@@ -12,6 +12,9 @@ namespace CustomMath
     {//https://github.com/Unity-Technologies/UnityCsReference/blob/master/Runtime/Export/Geometry/Plane.cs
 
         public Vec3 normal;
+        public Vec3 verA;
+        public Vec3 verB;
+        public Vec3 verC;
 
         public float distance;
         public MyPlane flipped => new(-normal, -distance);
@@ -20,12 +23,18 @@ namespace CustomMath
         {
             this.normal = Vec3.Cross(inNormal, inPoint);
             this.distance = 0f + Vec3.Dot(inNormal, inPoint);
+            verA = inPoint;
+            verB = inPoint;
+            verC = inPoint;
         }
 
         public MyPlane(Vec3 inNormal, float d)
         {
             this.normal = inNormal;
             this.distance = d;
+            verA =normal;
+            verB =normal;
+            verC =normal;
         }
 
 
@@ -33,6 +42,9 @@ namespace CustomMath
         {
             this.normal = Vec3.Cross(b - a, c - a).normalized;
             this.distance = -Vec3.Dot(this.normal, a);
+            verA = a;
+            verB = b;
+            verC = c;
         }
         public static bool operator ==(MyPlane left, MyPlane right)
         {
