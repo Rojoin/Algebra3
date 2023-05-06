@@ -70,7 +70,6 @@ public class Test : MonoBehaviour
     void ExerciceOne()
     {
 
-        
         switch (exerciseNumber)
         {
             case 1:

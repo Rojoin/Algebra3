@@ -119,6 +119,7 @@ namespace CustomMath
         {
             return new Vector3(v3.x, v3.y, v3.z);
         }
+     
 
         public static implicit operator Vector2(Vec3 v2)
         {
