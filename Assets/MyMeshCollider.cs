@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,13 +83,13 @@ public class MyMeshCollider : MonoBehaviour
             Vec3 verticeB = new Vec3((transform.TransformPoint(mesh.vertices[mesh.GetIndices(0)[i + 1]])));
 
             Vec3 verticeC = new Vec3((transform.TransformPoint(mesh.vertices[mesh.GetIndices(0)[i + 2]])));
-            //verticeA *= -1;
-            //verticeB *= -1;
-            //verticeC *= -1;
+            // verticeA *= -1;
+            // verticeB *= -1;
+            // verticeC *= -1;
 
             //Creo el plano con los vertices
             var myPlane = new MyPlane(verticeA, verticeB, verticeC);
-
+            myPlane.normal *= -1;
             planes.Add(myPlane);
 
 
@@ -174,26 +175,21 @@ public class MyMeshCollider : MonoBehaviour
 
     private bool IsValidPlane(MyPlane plane, Vec3 point)
     {
-        float x1 = plane.verA.x; float y1 = plane.verA.y;  float z1 = plane.verA.z;
-        float x2 = plane.verB.x; float y2 = plane.verB.y;  float z2 = plane.verB.z;
-        float x3 = plane.verC.x; float y3 = plane.verC.y;  float z3 = plane.verC.z;
+        float x1 = plane.verA.x; float y1 = plane.verA.y; float z1 = plane.verA.z;
+        float x2 = plane.verB.x; float y2 = plane.verB.y; float z2 = plane.verB.z;
+        float x3 = plane.verC.x; float y3 = plane.verC.y; float z3 = plane.verC.z;
 
-        // get the area of the triangle
+        // Area del triangulo
         float areaOrig = Mathf.Abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1));
 
-        // get the area of 3 triangles made between the point
-        // and the corners of the triangle
+        // Areas de los 3 triangulos hechos con el punto y las esquinas
         float area1 = Mathf.Abs((x1 - point.x) * (y2 - point.y) - (x2 - point.x) * (y1 - point.y));
         float area2 = Mathf.Abs((x2 - point.x) * (y3 - point.y) - (x3 - point.x) * (y2 - point.y));
         float area3 = Mathf.Abs((x3 - point.x) * (y1 - point.y) - (x1 - point.x) * (y3 - point.y));
 
-        // if the sum of the three areas equals the original,
-        // we're inside the triangle!
-        if (area1 + area2 + area3 == areaOrig)
-        {
-            return true;
-        }
-        return false;
+
+        // Si la suma del area de los 3 triangulos es igual a la del original estamos adentro
+        return Math.Abs(area1 + area2 + area3 - areaOrig) < Vec3.epsilon; //fijatse de cambiar pr comparacion aepsilon
 
         //chequear con los 3 puntos de plane si el punto pertence al vertice
         // si pertenece true, y sumo counter
@@ -225,15 +221,14 @@ public class MyMeshCollider : MonoBehaviour
     {
         point = Vec3.Zero;// Tiene que se el punto de interseccion
 
-
         float denom = Vec3.Dot(plane.normal, ray.destination);
-        if (Mathf.Abs(denom) > Vec3.epsilon) // your favorite epsilon
+        if (Mathf.Abs(denom) > Vec3.epsilon)
         {
             float t = Vec3.Dot((plane.normal * plane.distance - ray.origin), plane.normal) / denom;
             if (t >= Vec3.epsilon)
             {
                 point = ray.origin + ray.destination * t;  //Vec3.Lerp
-                return true; // you might want to allow an epsilon here too
+                return true;
             }
         }
         return false;
