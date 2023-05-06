@@ -9,21 +9,52 @@ public class MeshCollider : MonoBehaviour
     public bool isActive;
     public int num;
     private List<Vec3> pointsInside;
-    private Vec3 nearestPoint;
+    public Vec3 nearestPoint;
     private List<Vec3> previousVertex;
+    private List<Vec3> poinsToCheck;
 
+
+    struct PlaneAndVertice
+    {
+        public MyPlane plane;
+        public Vec3 verticeA;
+        public Vec3 verticeB;
+        public Vec3 verticeC;
+        public Vec3 normal;
+        public PlaneAndVertice(MyPlane plane, Vec3 verA, Vec3 verB, Vec3 verC)
+        {
+            this.plane = plane;
+            this.verticeA = verA;
+            this.verticeB = verB;
+            this.verticeC = verC;
+            normal = plane.normal;
+        }
+    }
+
+    struct Ray
+    {
+        public Vec3 origin;
+        public Vec3 destination;
+        public Plane planeHit;
+    }
+
+    private List<PlaneAndVertice> planeAndVertices;
     void Start()
     {
 
         Mesh mesh = GetComponent<MeshFilter>().mesh;
+        planeAndVertices = new List<PlaneAndVertice>();
+        poinsToCheck = new List<Vec3>();
+        previousVertex = new List<Vec3>();
+        pointsInside = new List<Vec3>();
         planes = new List<MyPlane>();
+
         for (int i = 0; i < mesh.GetIndices(0).Length; i += 3)
         {
             Vec3 auxA = new Vec3(mesh.vertices[mesh.GetIndices(0)[i]]);
             Vec3 auxB = new Vec3(mesh.vertices[mesh.GetIndices(0)[i + 1]]);
             Vec3 auxC = new Vec3(mesh.vertices[mesh.GetIndices(0)[i + 2]]);
             planes.Add(new MyPlane(auxA, auxB, auxC));
-
         }
         for (int i = 0; i < planes.Count; i++)
         {
@@ -43,7 +74,9 @@ public class MeshCollider : MonoBehaviour
     {
         Mesh mesh = GetComponent<MeshFilter>().mesh;
         planes.Clear();
+
         previousVertex = new List<Vec3>();
+
         for (int i = 0; i < mesh.GetIndices(0).Length; i += 3)
         {
             //Creo un Plano vacio, que si hay un plano anterior en la lista lo iguala
@@ -53,15 +86,18 @@ public class MeshCollider : MonoBehaviour
             {
                 previousPlane = planes[^1];
             }
+            // transform.TransformPoint
+            //Vec3 a = new Vec3(gameObject.transform.localScale.x, gameObject.transform.localScale.y, gameObject.transform.localScale.z);
 
-            Vec3 a = new Vec3(gameObject.transform.localScale.x, gameObject.transform.localScale.y, gameObject.transform.localScale.z);
             //Consigo los vertices del tri actual
-            Vec3 verticeA = new Vec3(transform.TransformPoint(mesh.vertices[mesh.GetIndices(0)[i]]));
-            verticeA.Scale(a);
-            Vec3 verticeB = new Vec3(transform.TransformPoint(mesh.vertices[mesh.GetIndices(0)[i + 1]]));
-            verticeB.Scale(a);
-            Vec3 verticeC = new Vec3(transform.TransformPoint(mesh.vertices[mesh.GetIndices(0)[i + 2]]));
-            verticeC.Scale(a);
+            Vec3 verticeA = new Vec3((transform.TransformPoint(mesh.vertices[mesh.GetIndices(0)[i]])));
+
+            Vec3 verticeB = new Vec3((transform.TransformPoint(mesh.vertices[mesh.GetIndices(0)[i + 1]])));
+
+            Vec3 verticeC = new Vec3((transform.TransformPoint(mesh.vertices[mesh.GetIndices(0)[i + 2]])));
+            verticeA *= -1;
+            verticeB *= -1;
+            verticeC *= -1;
 
             //Creo el plano con los vertices
             var myPlane = new MyPlane(verticeA, verticeB, verticeC);
@@ -77,6 +113,7 @@ public class MeshCollider : MonoBehaviour
                 if (counter < 2)
                 {
                     planes.Add(myPlane);
+                    planeAndVertices.Add(new PlaneAndVertice(myPlane, verticeA, verticeB, verticeC));
                     // agrego los vertices nuevos para chequear
                     AddNewPreviousVertex(verticeA, verticeB, verticeC);
                 }
@@ -84,6 +121,7 @@ public class MeshCollider : MonoBehaviour
             else//Si es el primer plano o no son iguales los plano agrego un plano
             {
                 planes.Add(myPlane);
+                planeAndVertices.Add(new PlaneAndVertice(myPlane, verticeA, verticeB, verticeC));
                 AddNewPreviousVertex(verticeA, verticeB, verticeC);
             }
 
@@ -91,28 +129,75 @@ public class MeshCollider : MonoBehaviour
 
         for (int i = 0; i < planes.Count; i++)
         {
-            Vec3 aux = new Vec3(mesh.normals[i]);
-            if (planes[i].normal != aux)
-            {
-                planes[i].SetNormalAndPosition(aux, planes[i].normal * planes[i].distance);
-            }
+            planes[i].Flip();
         }
 
         GetNearestPoint();
-        var planeRayCounter = 0;
-        foreach (var plane in planes)
-        {
-            if (IsPointInPlane(plane))
-            {
-                planeRayCounter++;
-            }
-        }
+        AddPointsToCheck();
+        AddPointsInside();
 
 
-    //    Debug.Log("Colisiono con :" + planeRayCounter + " planos");
+        Debug.Log("Points:" + pointsInside.Count);
+        // Debug.Log("Colisiono con :" + planeRayCounter + " planos");
 
 
     }
+
+    private Vec3 FromLocalToWolrd(Vec3 point, Transform transformRef)
+    {
+        Vector3 result = Vector3.zero;
+
+        result = new Vector3(point.x * transformRef.localScale.x, point.y * transformRef.localScale.y, point.z * transformRef.localScale.z);
+
+        result = transform.rotation * (Vector3)result;
+
+        Vec3 finalResult = new Vec3(result);
+
+        return finalResult + new Vec3(transformRef.position);
+    }
+    private void AddPointsToCheck()
+    {
+        poinsToCheck.Clear();
+        int maxX = (int)(nearestPoint.x + 3.0f); int minX = (int)(nearestPoint.x - 3.0f);
+        int maxY = (int)(nearestPoint.y + 3.0f); int minY = (int)(nearestPoint.y - 3.0f);
+        int maxZ = (int)(nearestPoint.z + 3.0f); int minZ = (int)(nearestPoint.z - 3.0f);
+
+        maxX = Mathf.Clamp(maxX, 0, Grid.size - 1);
+        maxY = Mathf.Clamp(maxY, 0, Grid.size - 1);
+        maxZ = Mathf.Clamp(maxZ, 0, Grid.size - 1);
+        minX = Mathf.Clamp(minX, 0, Grid.size - 1);
+        minY = Mathf.Clamp(minY, 0, Grid.size - 1);
+        minZ = Mathf.Clamp(minZ, 0, Grid.size - 1);
+
+
+        for (int x = minX; x < maxX; x++)
+        {
+            for (int y = minY; y < maxY; y++)
+            {
+                for (int z = minZ; z < maxZ; z++)
+                {
+
+                    poinsToCheck.Add(Grid.grid[x, y, z]);
+
+                }
+            }
+        }
+    }
+
+    void AddPointsInside()
+    {
+        pointsInside.Clear();
+        foreach (var point in poinsToCheck)
+        {
+            var counter = 0;
+            foreach (var plane in planes)
+            {
+                if (IsPointInPlane(plane, point)) counter++;
+            }
+            if (counter % 2 == 1) pointsInside.Add(point);
+        }
+    }
+
 
     private void AddNewPreviousVertex(Vec3 verticeA, Vec3 verticeB, Vec3 verticeC)
     {
@@ -130,23 +215,17 @@ public class MeshCollider : MonoBehaviour
     {
         var aux = position / Grid.Delta;
         float x = aux - (int)aux > 0.5f ? aux + 1.0f : aux;
-        if (x > Grid.size - 1)
-        {
-            x = Grid.size - 1;
-        }
-        else if (x < 0)
-        {
-            x = 0;
-        }
+        x = Mathf.Clamp(x, 0, Grid.size - 1);
         return (int)x;
     }
 
-    bool IsPointInPlane(MyPlane plane)
+    bool 
+        IsPointInPlane(MyPlane plane, Vec3 point)
     {
         float denom = Vec3.Dot(plane.normal, Vec3.Back * 10f);
         if (Mathf.Abs(denom) > Vec3.epsilon) // your favorite epsilon
         {
-            float t = Vec3.Dot((plane.normal * plane.distance - nearestPoint), plane.normal) / denom;
+            float t = Vec3.Dot((plane.normal * plane.distance - point), plane.normal) / denom;
             if (t >= Vec3.epsilon) return true; // you might want to allow an epsilon here too
         }
         return false;
@@ -162,11 +241,7 @@ public class MeshCollider : MonoBehaviour
 
     }
 
-    void CheckPoint()
-    {
 
-
-    }
     void OnDrawGizmos()
     {
         if (isActive)
@@ -178,7 +253,10 @@ public class MeshCollider : MonoBehaviour
                 DrawPlane(VARIABLE.normal * VARIABLE.distance, VARIABLE.normal, Color.red);
             }
 
-            Gizmos.DrawRay(nearestPoint, Vec3.Back * 10f);
+            foreach (var point in pointsInside)
+            {
+                Gizmos.DrawRay(point, Vec3.Back * 10f);
+            }
 
         }
 

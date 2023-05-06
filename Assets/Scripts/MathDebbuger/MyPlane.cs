@@ -16,11 +16,10 @@ namespace CustomMath
         public float distance;
         public MyPlane flipped => new(-normal, -distance);
 
-
         public MyPlane(Vec3 inNormal, Vec3 inPoint)
         {
-            this.normal = Vec3.Cross(inNormal,inPoint);
-            this.distance = 0f + Vec3.Dot(inNormal, inPoint); 
+            this.normal = Vec3.Cross(inNormal, inPoint);
+            this.distance = 0f + Vec3.Dot(inNormal, inPoint);
         }
 
         public MyPlane(Vec3 inNormal, float d)
@@ -37,7 +36,7 @@ namespace CustomMath
         }
         public static bool operator ==(MyPlane left, MyPlane right)
         {
-            
+
             return left.normal == right.normal && left.distance == right.distance;
         }
 
@@ -71,23 +70,22 @@ namespace CustomMath
             distance += Vector3.Dot(normal, translation);
         }
 
-       public static MyPlane Translate(MyPlane plane, Vec3 translation)
-       {
-           return new MyPlane(plane.normal, plane.distance += Vector3.Dot(plane.normal, translation));
-        }
-       
-       
-       public Vector3 ClosestPointOnPlane(Vec3 point)
-       {
-           var pointToPlaneDistance = Vector3.Dot(normal, point) + distance;
-           return point - (normal * pointToPlaneDistance);
+        public static MyPlane Translate(MyPlane plane, Vec3 translation)
+        {
+            return new MyPlane(plane.normal, plane.distance += Vector3.Dot(plane.normal, translation));
         }
 
-   //vector generado entre el planoy el punto y la normal
-            // si el angulo es menor a 90 es mayor
-       public float GetDistanceToPoint(Vec3 point)
-       {
-           return Vec3.Dot(normal, point) + distance;
+
+        public Vector3 ClosestPointOnPlane(Vec3 point)
+        {
+            var pointToPlaneDistance = Vector3.Dot(normal, point) + distance;
+            return point - (normal * pointToPlaneDistance);
+        }
+        //vector generado entre el planoy el punto y la normal
+        // si el angulo es menor a 90 es mayor
+        public float GetDistanceToPoint(Vec3 point)
+        {
+            return Vec3.Dot(normal, point) + distance;
         }
 
         //Calcula si un punto esta del lado "positivo" del Plano
@@ -97,7 +95,7 @@ namespace CustomMath
         {
             return Vec3.Dot(normal, point) + distance > 0.0F;
         }
-       
+
         public bool SameSide(Vec3 inPt0, Vec3 inPt1)
         {
             float d0 = GetDistanceToPoint(inPt0);
