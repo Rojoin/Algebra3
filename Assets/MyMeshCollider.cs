@@ -126,16 +126,23 @@ public class MyMeshCollider : MonoBehaviour
     private void AddPointsToCheck()
     {
         poinsToCheck.Clear();
-        int maxX = (int)(nearestPoint.x + 3.0f); int minX = (int)(nearestPoint.x - 3.0f);
-        int maxY = (int)(nearestPoint.y + 3.0f); int minY = (int)(nearestPoint.y - 3.0f);
-        int maxZ = (int)(nearestPoint.z + 3.0f); int minZ = (int)(nearestPoint.z - 3.0f);
 
-        maxX = Mathf.Clamp(maxX, 0, Grid.size - 1);
-        maxY = Mathf.Clamp(maxY, 0, Grid.size - 1);
-        maxZ = Mathf.Clamp(maxZ, 0, Grid.size - 1);
-        minX = Mathf.Clamp(minX, 0, Grid.size - 1);
-        minY = Mathf.Clamp(minY, 0, Grid.size - 1);
-        minZ = Mathf.Clamp(minZ, 0, Grid.size - 1);
+
+        int maxX = GetMaxGridSizePerAxis(nearestPoint.x, transform.localScale.x, 1);
+        int maxY = GetMaxGridSizePerAxis(nearestPoint.y, transform.localScale.y, 1);
+        int maxZ = GetMaxGridSizePerAxis(nearestPoint.z, transform.localScale.z, 1);
+
+        int minX = GetMaxGridSizePerAxis(nearestPoint.x, transform.localScale.x, -1);
+        int minY = GetMaxGridSizePerAxis(nearestPoint.y, transform.localScale.y, -1);
+        int minZ = GetMaxGridSizePerAxis(nearestPoint.z, transform.localScale.z, -1);
+
+        var gridSize = Grid.size - 1;
+        maxX = Mathf.Clamp(maxX, 0, gridSize);
+        maxY = Mathf.Clamp(maxY, 0, gridSize);
+        maxZ = Mathf.Clamp(maxZ, 0, gridSize);
+        minX = Mathf.Clamp(minX, 0, gridSize);
+        minY = Mathf.Clamp(minY, 0, gridSize);
+        minZ = Mathf.Clamp(minZ, 0, gridSize);
 
 
         for (int x = minX; x < maxX; x++)
@@ -150,6 +157,11 @@ public class MyMeshCollider : MonoBehaviour
                 }
             }
         }
+    }
+
+    private int GetMaxGridSizePerAxis(float nearestPoint, float scale, int number)
+    {
+        return (int)(nearestPoint) + (3 + (int)scale - 1) * number;
     }
 
     void AddPointsInside()
