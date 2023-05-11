@@ -51,9 +51,9 @@ public class Test : MonoBehaviour
     }
     private void OnValidate()
     {
-        Vector3Debugger.UpdatePosition("Vector1", firstVec3);
-        Vector3Debugger.UpdatePosition("Vector2", secondVec3);
-        Vector3Debugger.UpdatePosition("Vector3",aux);
+       //Vector3Debugger.UpdatePosition("Vector1", firstVec3);
+       //Vector3Debugger.UpdatePosition("Vector2", secondVec3);
+       //Vector3Debugger.UpdatePosition("Vector3",aux);
         firstVector3 = new Vector3(firstVec3.x, firstVec3.y, firstVec3.z);
         secondVector3 = new Vector3(secondVec3.x, secondVec3.y, secondVec3.z);
         switch (exerciseNumber)

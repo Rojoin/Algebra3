@@ -9,10 +9,8 @@ public class MyMeshCollider : MonoBehaviour
 {
     private List<MyPlane> planes;
     public bool isActive;
-    public int num;
     public List<Vec3> pointsInside;
     public Vec3 nearestPoint;
-    private List<Vec3> previousVertex;
     private List<Vec3> poinsToCheck;
 
 
@@ -36,24 +34,23 @@ public class MyMeshCollider : MonoBehaviour
         Mesh mesh = GetComponent<MeshFilter>().mesh;
 
         poinsToCheck = new List<Vec3>();
-        previousVertex = new List<Vec3>();
         pointsInside = new List<Vec3>();
         planes = new List<MyPlane>();
 
-        for (int i = 0; i < mesh.GetIndices(0).Length; i += 3)
-        {
-            Vec3 auxA = new Vec3(mesh.vertices[mesh.GetIndices(0)[i]]);
-            Vec3 auxB = new Vec3(mesh.vertices[mesh.GetIndices(0)[i + 1]]);
-            Vec3 auxC = new Vec3(mesh.vertices[mesh.GetIndices(0)[i + 2]]);
-            planes.Add(new MyPlane(auxA, auxB, auxC));
-        }
-        for (int i = 0; i < planes.Count; i++)
-        {
-            Vec3 aux = new Vec3(mesh.normals[i]);
-
-            planes[i].SetNormalAndPosition(aux, planes[i].normal * planes[i].distance);
-
-        }
+        //for (int i = 0; i < mesh.GetIndices(0).Length; i += 3)
+        //{
+        //    Vec3 auxA = new Vec3(mesh.vertices[mesh.GetIndices(0)[i]]);
+        //    Vec3 auxB = new Vec3(mesh.vertices[mesh.GetIndices(0)[i + 1]]);
+        //    Vec3 auxC = new Vec3(mesh.vertices[mesh.GetIndices(0)[i + 2]]);
+        //    planes.Add(new MyPlane(auxA, auxB, auxC));
+        //}
+        //for (int i = 0; i < planes.Count; i++)
+        //{
+        //    Vec3 aux = new Vec3(mesh.normals[i]);
+        //
+        //    planes[i].SetNormalAndPosition(aux, planes[i].normal * planes[i].distance);
+        //
+        //}
     }
 
     void OnDestroy()
@@ -66,7 +63,7 @@ public class MyMeshCollider : MonoBehaviour
         Mesh mesh = GetComponent<MeshFilter>().mesh;
         planes.Clear();
 
-        previousVertex = new List<Vec3>();
+     
 
         for (int i = 0; i < mesh.GetIndices(0).Length; i += 3)
         {
