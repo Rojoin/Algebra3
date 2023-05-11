@@ -21,7 +21,7 @@ namespace CustomMath
 
         public MyPlane(Vec3 inNormal, Vec3 inPoint)
         {
-            this.normal = Vec3.Cross(inNormal, inPoint);
+            this.normal = inNormal.normalized;
             this.distance = 0f + Vec3.Dot(inNormal, inPoint);
             verA = inPoint;
             verB = inPoint;
@@ -30,7 +30,7 @@ namespace CustomMath
 
         public MyPlane(Vec3 inNormal, float d)
         {
-            this.normal = inNormal;
+            this.normal = inNormal.normalized;
             this.distance = d;
             verA =normal;
             verB =normal;
@@ -59,7 +59,7 @@ namespace CustomMath
         public static MyPlane Zero { get { return new MyPlane(Vec3.Zero, 0); } }
         public void SetNormalAndPosition(Vec3 inNormal, Vec3 inPoint)
         {
-            this.normal = Vec3.Cross(inNormal, inPoint);
+            this.normal = inNormal.normalized;
             this.distance = 0f + Vec3.Dot(inNormal, inPoint);
         }
 

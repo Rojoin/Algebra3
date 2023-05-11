@@ -111,18 +111,7 @@ public class MyMeshCollider : MonoBehaviour
 
     }
 
-    private Vec3 FromLocalToWolrd(Vec3 point, Transform transformRef)
-    {
-        Vector3 result = Vector3.zero;
 
-        result = new Vector3(point.x * transformRef.localScale.x, point.y * transformRef.localScale.y, point.z * transformRef.localScale.z);
-
-        result = transform.rotation * (Vector3)result;
-
-        Vec3 finalResult = new Vec3(result);
-
-        return finalResult + new Vec3(transformRef.position);
-    }
     private void AddPointsToCheck()
     {
         poinsToCheck.Clear();
@@ -209,18 +198,7 @@ public class MyMeshCollider : MonoBehaviour
     }
 
 
-    private void AddNewPreviousVertex(Vec3 verticeA, Vec3 verticeB, Vec3 verticeC)
-    {
-        previousVertex.Clear();
-        previousVertex.Add(verticeA);
-        previousVertex.Add(verticeB);
-        previousVertex.Add(verticeC);
-    }
-
-    bool IsTheSameVertice(Vec3 vertex, Vec3 vertice1, Vec3 vertice2, Vec3 vertice3)
-    {
-        return vertex == vertice1 || vertex == vertice2 || vertex == vertice3;
-    }
+ 
     int NearestPositionValue(float position)
     {
         var aux = position / Grid.Delta;

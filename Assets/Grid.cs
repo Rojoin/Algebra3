@@ -9,7 +9,7 @@ public class Grid : MonoBehaviour
    public  float delta = 0.2f;
    public static float Delta;
    public static int size = 10;
-   public static Vec3[,,] grid = new Vec3[size, size, size];
+   public static Vec3[,,] grid;
    public bool isActive = false;
 
 
@@ -21,7 +21,9 @@ public class Grid : MonoBehaviour
   
     void Start()
     {
+        
         Delta = delta;
+        grid = new Vec3[size, size, size];
         isActive = true;
         for (int x = 0; x < grid.GetLength(0); x++)
         {
@@ -50,7 +52,8 @@ public class Grid : MonoBehaviour
             {
                 for (int z = 0; z < grid.GetLength(2); z++)
                 {
-                    Gizmos.DrawSphere(new Vec3(x,y,z)*delta,0.1f);
+
+                    Gizmos.DrawWireSphere(new Vec3(x,y,z)*delta,0.1f);
                 }
             }
         }

@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edfdaddd14b665c4b9fb8acf7603ff06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isActive: 0
+  isActive: 1
   num: 0
   pointsInside: []
   nearestPoint:
@@ -386,7 +386,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edfdaddd14b665c4b9fb8acf7603ff06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isActive: 0
+  isActive: 1
   num: 0
   pointsInside: []
   nearestPoint:
@@ -804,7 +804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc5820141964dea4cb45bc92bf6b03cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delta: 1
+  delta: 0.2
   isActive: 0
 --- !u!4 &1690254835
 Transform:
