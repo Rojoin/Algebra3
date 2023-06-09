@@ -90,7 +90,7 @@ namespace CustomMath
 
         public Vector3 ClosestPointOnPlane(Vec3 point)
         {
-            var pointToPlaneDistance = Vector3.Dot(normal, point) + distance;
+            var pointToPlaneDistance = GetDistanceToPoint(point);
             return point - (normal * pointToPlaneDistance);
         }
         //vector generado entre el planoy el punto y la normal

@@ -80,6 +80,8 @@ namespace CustomMath
             float diff_z = left.z - right.z;
             float sqrmag = diff_x * diff_x + diff_y * diff_y + diff_z * diff_z;
             return sqrmag < epsilon * epsilon;
+     
+
         }
         public static bool operator !=(Vec3 left, Vec3 right)
         {

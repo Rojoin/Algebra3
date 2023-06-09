@@ -156,7 +156,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  num: 0
   pointsInside: []
   nearestPoint:
     x: 0
@@ -387,7 +386,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  num: 0
   pointsInside: []
   nearestPoint:
     x: 0
@@ -736,7 +734,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  num: 0
   pointsInside: []
   nearestPoint:
     x: 0
@@ -931,7 +928,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  num: 0
   pointsInside: []
   nearestPoint:
     x: 0
