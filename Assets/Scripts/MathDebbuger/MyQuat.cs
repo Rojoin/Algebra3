@@ -17,9 +17,7 @@ namespace CustomMath
         public float w;
         public const double kEpsilon = 1E-06;
 
-
         public static MyQuat identity => new MyQuat(0, 0, 0, 1);
-
 
         public MyQuat(float x, float y, float z, float w)
         {
@@ -28,21 +26,48 @@ namespace CustomMath
             this.z = z;
             this.w = w;
         }
-        //TODO
         public static MyQuat Inverse(Quaternion rotation)
         {
             return new MyQuat(-rotation.x, -rotation.y, -rotation.z, -rotation.w);
         }
-        //TODO
         public static MyQuat Slerp(MyQuat a, MyQuat b, float t)
         {
-            return identity;
-        }
-        //TODO
+            t = Mathf.Clamp01(t);
 
+            return SlerpUnclamped(a,b,t);
+        }
         public static MyQuat SlerpUnclamped(MyQuat a, MyQuat b, float t)
         {
-            return identity;
+            MyQuat r = identity;
+
+            float time = 1 - t;
+
+            float wa, wb;
+
+            float angle = Mathf.Acos(Dot(a, b)); //angulo entre los quaterniones
+
+            angle = Mathf.Abs(angle);//valor absoluto
+
+            float sn = Mathf.Sin(angle); //Seno del angulo
+
+            wa = Mathf.Sin(time * angle) / sn;
+            wb = Mathf.Sin((1 - time) * angle) / sn;
+
+            r.x = wa * a.x + wb * b.x;   //Lerp
+            r.y = wa * a.y + wb * b.y;   //Lerp
+            r.z = wa * a.z + wb * b.z;   //Lerp
+            r.w = wa * a.w + wb * b.w;   //Lerp
+
+            r.Normalize();
+
+            return r;
+ 
+        }
+        public static MyQuat Lerp(MyQuat a, MyQuat b, float t)
+        {
+            if (t < 0) t = 0;
+            if (t > 1) t = 1;
+            return LerpUnclamped(a, b, t);
         }
 
         public static MyQuat LerpUnclamped(MyQuat a, MyQuat b, float t)
@@ -60,31 +85,31 @@ namespace CustomMath
             return toReturn.normalized;
         }
 
-        public static MyQuat Lerp(MyQuat a, MyQuat b, float t)
+        public static MyQuat AngleAxis(float angle, Vec3 axis)//Genera una rotacion en vector el vector
         {
-            if (t < 0) t = 0;
-            if (t > 1) t = 1;
-            return LerpUnclamped(a, b, t);
+            MyQuat toReturn = identity;
+            axis.Normalize();//normalizamos el axis
+            axis *= Mathf.Sin((angle / 2) * Mathf.Deg2Rad); //Parte imaginaria
+            toReturn.x = axis.x;
+            toReturn.y = axis.y;
+            toReturn.z = axis.z;
+            toReturn.w = Mathf.Cos((angle / 2) * Mathf.Deg2Rad); //Parte real
+            return Normalize(toReturn);
         }
-        //TODO
-        public static MyQuat AngleAxis(float angle, Vec3 axis)
-        {
-            return identity;
-        }
-        //TODO
         public static MyQuat LookRotation(Vec3 forward, [DefaultValue("Vec3.up")] Vec3 upwards)
-        {
+        { //Tengo que conseguir la squareRoot de t(1+ la diagonal)
+            //Dependiendo de cada caso tengo que cambiar el signo y adecuarme, cambiando en si los componentes
             forward.Normalize();
 
             Vec3 vector2 = Vec3.Cross(upwards, forward).normalized;
             Vec3 vector3 = Vec3.Cross(forward, vector2);
-            
 
-            float rotation = (vector2.x + vector3.y) + forward.z;
+
+            float diagonal = (vector2.x + vector3.y) + forward.z;
             var quaternion = new MyQuat();
-            if (rotation > 0f)
+            if (diagonal > 0f)// la matrix esta en buen estado, se puede calcular la determinante
             {
-                var cos = (float)Math.Sqrt(rotation + 1f);
+                var cos = (float)Math.Sqrt(diagonal + 1f);
                 quaternion.w = cos * 0.5f;
                 cos = 0.5f / cos;
                 quaternion.x = (vector3.z - forward.y) * cos;
@@ -92,11 +117,62 @@ namespace CustomMath
                 quaternion.z = (vector2.y - vector3.x) * cos;
                 return quaternion;
             }
-            if ((vector2.x >= vector3.y) && (vector2.x >= forward.z))
+            if ((vector2.x >= vector3.y) && (vector2.x >= forward.z)) //La determinante es positiva, por lo que niego las otras para conseguir el coseno
             {
-                var num7 = (float)Math.Sqrt(((1f + vector2.x) - vector3.y) - forward.z);
-                var num4 = 0.5f / num7;
-                quaternion.x = 0.5f * num7;
+                var cos1 = (float)Math.Sqrt(((1f + vector2.x) - vector3.y) - forward.z); //Cos
+                var num4 = 0.5f / cos1;
+                quaternion.x = 0.5f * cos1;
+                quaternion.y = (vector2.y + vector3.x) * num4;
+                quaternion.z = (vector2.z + forward.x) * num4;
+                quaternion.w = (vector3.z - forward.y) * num4;
+                return quaternion;
+            }
+            if (vector3.y > forward.z)//La determinante es negativa, por lo que niego las otras
+            {
+                var num6 = (float)Math.Sqrt(((1f + vector3.y) - vector2.x) - forward.z);
+                var num3 = 0.5f / num6;
+                quaternion.x = (vector3.x + vector2.y) * num3;
+                quaternion.y = 0.5f * num6;
+                quaternion.z = (forward.y + vector3.z) * num3;
+                quaternion.w = (forward.x - vector2.z) * num3;
+                return quaternion;
+            }
+
+            var num5 = (float)Math.Sqrt(((1f + forward.z) - vector2.x) - vector3.y);
+            var num2 = 0.5f / num5;
+            quaternion.x = (forward.x + vector2.z) * num2;
+            quaternion.y = (forward.y + vector3.z) * num2;
+            quaternion.z = 0.5f * num5;
+            quaternion.w = (vector2.y - vector3.x) * num2;
+            return quaternion;
+
+        }
+        public static MyQuat LookRotation(Vec3 forward)
+        {
+            Vec3 upwards = Vec3.Up;
+            forward.Normalize();
+
+            Vec3 vector2 = Vec3.Cross(upwards, forward).normalized;
+            Vec3 vector3 = Vec3.Cross(forward, vector2);
+
+
+            float diagonal = (vector2.x + vector3.y) + forward.z;
+            var quaternion = new MyQuat();
+            if (diagonal > 0f)
+            {
+                var cos = (float)Math.Sqrt(diagonal + 1f);
+                quaternion.w = cos * 0.5f;
+                cos = 0.5f / cos;
+                quaternion.x = (vector3.z - forward.y) * cos;
+                quaternion.y = (forward.x - vector2.z) * cos;
+                quaternion.z = (vector2.y - vector3.x) * cos;
+                return quaternion;
+            }
+            if ((vector2.x >= vector3.y) && (vector2.x >= forward.z)) //si el primer valor de la matriz es mayor o igual a sus dos en diagonal
+            {
+                var cos1 = (float)Math.Sqrt(((1f + vector2.x) - vector3.y) - forward.z); //Cos
+                var num4 = 0.5f / cos1;
+                quaternion.x = 0.5f * cos1;
                 quaternion.y = (vector2.y + vector3.x) * num4;
                 quaternion.z = (vector2.z + forward.x) * num4;
                 quaternion.w = (vector3.z - forward.y) * num4;
@@ -119,24 +195,34 @@ namespace CustomMath
             quaternion.z = 0.5f * num5;
             quaternion.w = (vector2.y - vector3.x) * num2;
             return quaternion;
-
         }
-        //TODO
-        public static MyQuat LookRotation(Vec3 forward)
+        public float this[int index]
         {
-
-            MyQuat toReturn = identity;
-            if (forward.magnitude < kEpsilon)
+            get
             {
-                return identity;
+                switch (index)
+                {
+                    case 0: return x;
+                    case 1: return y;
+                    case 2: return z;
+                    case 3: return w;
+                    default: return x;
+                }
             }
-            return identity;
+            set
+            {
+                switch (index)
+                {
+                    case 0: x = value; break;
+                    case 1: y = value; break;
+                    case 2: z = value; break;
+                    case 3: w = value; break;
+                    default: break;
+                }
+            }
         }
-
-        //   public float this[int index] {  get{} ; set{} ;}
-
         /// <summary>
-        /// Multiplico Todo
+        /// Multiplico all
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -182,15 +268,13 @@ namespace CustomMath
 
         public void SetLookRotation(Vec3 view)
         {
-
+            this = LookRotation(view,Vec3.Up);
         }
 
         public void SetLookRotation(Vec3 view, [DefaultValue("Vec3.Up")] Vec3 up)
         {
-
+            this = LookRotation(view,up);
         }
-
-
         public static float Angle(MyQuat a, MyQuat b)
         {
             if (a.magnitude == 0 || b.magnitude == 0)
@@ -200,7 +284,6 @@ namespace CustomMath
 
             return Mathf.Acos(Mathf.Abs(Dot(a, b)) * Mathf.Rad2Deg / (a.magnitude * b.magnitude));
         }
-
         public Vec3 eulerAngles
         {
             get
@@ -224,7 +307,6 @@ namespace CustomMath
             }
             set => this = MyQuat.Euler(value);
         }
-
         //Calculamos un quaternion en base a las rotaciones
         public static MyQuat Euler(float x, float y, float z)
         {
@@ -252,15 +334,19 @@ namespace CustomMath
             return toReturn;
 
         }
-
         public static MyQuat Euler(Vec3 euler)
         {
             return Euler(euler.x, euler.y, euler.z);
         }
-        //TODO
         public static MyQuat RotateTowards(MyQuat from, MyQuat to, float maxDegreesDelta)
         {
-            return identity;
+            float num = Angle(from, to); //Es mover del uno al otro, la cantidad de grados especificada.
+            if (num == 0)
+            {
+                return to;
+            }
+            float t = Mathf.Min(1f, maxDegreesDelta / num);
+            return SlerpUnclamped(from, to, t);
         }
 
         public static MyQuat Normalize(MyQuat q)
@@ -281,7 +367,7 @@ namespace CustomMath
 
         }
         //TODO
-        public static MyQuat FromRotation(Vec3 fromDirection, Vec3 toDirection)
+        public static MyQuat FromToRotation(Vec3 fromDirection, Vec3 toDirection)
         {
             return identity;
         }
@@ -307,12 +393,6 @@ namespace CustomMath
         {
             return HashCode.Combine(w, x, y, z);
         }
-        public float magnitude
-        {
-            get
-            {
-                return Mathf.Sqrt(Mathf.Pow(x, 2) + Mathf.Pow(y, 2) + Mathf.Pow(z, 2) + Mathf.Pow(w, 2));
-            }
-        }
+        public float magnitude => Mathf.Sqrt(Mathf.Pow(x, 2) + Mathf.Pow(y, 2) + Mathf.Pow(z, 2) + Mathf.Pow(w, 2));
     }
 }
