@@ -361,17 +361,17 @@ namespace CustomMath
         }
 
         public MyQuat normalized => Normalize(this);
-        //TODO
         public void SetFromToRotation(Vec3 fromDirection, Vec3 toDirection)
         {
-
+            this = FromToRotation(fromDirection, toDirection);
         }
-        //TODO
+       
         public static MyQuat FromToRotation(Vec3 fromDirection, Vec3 toDirection)
         {
-            return identity;
+            Vec3 axis = Vec3.Cross(fromDirection, toDirection);
+            float angle = Vec3.Angle(fromDirection, toDirection);
+            return AngleAxis(angle, axis.normalized);
         }
-
         public void Set(float newX, float newY, float newZ, float newW)
         {
             this.x = newX;
