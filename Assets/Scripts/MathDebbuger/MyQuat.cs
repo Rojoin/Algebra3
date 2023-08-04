@@ -28,7 +28,7 @@ namespace CustomMath
         }
         public static MyQuat Inverse(Quaternion rotation)
         {
-            return new MyQuat(-rotation.x, -rotation.y, -rotation.z, -rotation.w);
+            return new MyQuat(-rotation.x, -rotation.y, -rotation.z, rotation.w);
         }
         public static MyQuat Slerp(MyQuat a, MyQuat b, float t)
         {
@@ -50,7 +50,7 @@ namespace CustomMath
 
             float sn = Mathf.Sin(angle); //Seno del angulo
 
-            wa = Mathf.Sin(time * angle) / sn;
+            wa = Mathf.Sin(time * angle) / sn; //valor oscilante (-1 a 1)
             wb = Mathf.Sin((1 - time) * angle) / sn;
 
             r.x = wa * a.x + wb * b.x;   //Lerp
@@ -85,7 +85,7 @@ namespace CustomMath
             return toReturn.normalized;
         }
 
-        public static MyQuat AngleAxis(float angle, Vec3 axis)//Genera una rotacion en vector el vector
+        public static MyQuat AngleAxis(float angle, Vec3 axis)//Genera una rotacion en vector 
         {
             MyQuat toReturn = identity;
             axis.Normalize();//normalizamos el axis
@@ -97,7 +97,8 @@ namespace CustomMath
             return Normalize(toReturn);
         }
         public static MyQuat LookRotation(Vec3 forward, [DefaultValue("Vec3.up")] Vec3 upwards)
-        { //Tengo que conseguir la squareRoot de t(1+ la diagonal)
+        { https://d3cw3dd2w32x2b.cloudfront.net/wp-content/uploads/2015/01/matrix-to-quat.pdf
+            //Tengo que conseguir la squareRoot de t(1+ la diagonal)
             //Dependiendo de cada caso tengo que cambiar el signo y adecuarme, cambiando en si los componentes
             forward.Normalize();
 

@@ -158,8 +158,8 @@ public struct MyMatrix4x4 : IEquatable<MyMatrix4x4>
             new Vector4(0, 0, 0, 0),
             new Vector4(0, 0, 0, 0),
             new Vector4(0, 0, 0, 0));
-    public Vector3 lossyScale => //Devuelve la escala real del objeto. Esto es en caso de que se apliquen rotaciones y otros cálculos, donde se pierde la escala
-        new(GetColumn(0).magnitude, GetColumn(1).magnitude, GetColumn(2).magnitude);
+    //Devuelve la escala real del objeto. Esto es en caso de que se apliquen rotaciones y otros cálculos, donde se pierde la escala
+    public Vector3 lossyScale => new(GetColumn(0).magnitude, GetColumn(1).magnitude, GetColumn(2).magnitude);
 
     public static MyMatrix4x4 Identity { get; } = new MyMatrix4x4
     (
@@ -199,7 +199,10 @@ public struct MyMatrix4x4 : IEquatable<MyMatrix4x4>
     }
 
     public float determinant => Determinant(this); //Devuelve la determinante de esa matriz
-    public static float Determinant(MyMatrix4x4 m)
+    //Nos devuelve si la matrix puede ser reversible sin perder datos
+    //Si es mayor o igual a 0 significa que puede revertirse sin perder datos
+    //si es menor el numero que te devuevle es una representacion de cantidad de datos perdidos
+    public static float Determinant(MyMatrix4x4 m) //determina entre otras cosas como si puede ser invertida
     {
         return
             m[0, 3] * m[1, 2] * m[2, 1] * m[3, 0] - m[0, 2] * m[1, 3] * m[2, 1] * m[3, 0] -
@@ -215,10 +218,11 @@ public struct MyMatrix4x4 : IEquatable<MyMatrix4x4>
             m[0, 2] * m[1, 0] * m[2, 1] * m[3, 3] - m[0, 0] * m[1, 2] * m[2, 1] * m[3, 3] -
             m[0, 1] * m[1, 0] * m[2, 2] * m[3, 3] + m[0, 0] * m[1, 1] * m[2, 2] * m[3, 3];
     }
+   //https://byjus.com/maths/inverse-matrix/#:~:text=A-1%3D%20adj(A)%2Fdet(A)%2C&text=take%20the%20transpose%20of%20a%20cofactor%20matrix.&text=Here%2C%20Mij%20refers%20to,adjoint%20of%20a%20matrix%20here
     public static MyMatrix4x4 Inverse(MyMatrix4x4 m) //Devuelve la inversa de la matriz ingresada
     {
         float detA = Determinant(m); //Debe tener determinante, de otra forma, no es inversible
-        if (detA == 0)
+        if (detA < 0)
             return zero;
 
         MyMatrix4x4 aux = new MyMatrix4x4()
@@ -309,10 +313,11 @@ public struct MyMatrix4x4 : IEquatable<MyMatrix4x4>
         v3.x = (float)((double)m00 * (double)p.x + (double)m01 * (double)p.y + (double)m02 * (double)p.z) + m03;
         v3.y = (float)((double)m10 * (double)p.x + (double)m11 * (double)p.y + (double)m12 * (double)p.z) + m13;
         v3.z = (float)((double)m20 * (double)p.x + (double)m21 * (double)p.y + (double)m22 * (double)p.z) + m23;
-        float num = 1f / ((float)((double)m30 * (double)p.x + (double)m31 * (double)p.y + (double)m32 * (double)p.z) + m33);
-        v3.x *= num;
-        v3.y *= num;
-        v3.z *= num;
+        //Creo un valor scalar
+        float scalar = 1f / ((float)((double)m30 * (double)p.x + (double)m31 * (double)p.y + (double)m32 * (double)p.z) + m33);
+        v3.x *= scalar;
+        v3.y *= scalar;
+        v3.z *= scalar;
         return v3;
     }
     public static MyMatrix4x4 TRS(Vec3 pos, MyQuat q, Vec3 s) //Devuelve la matriz TRS de los valores ingresados
@@ -367,7 +372,7 @@ public struct MyMatrix4x4 : IEquatable<MyMatrix4x4>
     {
         this = TRS(pos, q, s);
     }
-    public static MyMatrix4x4 Translate(Vec3 v) //Hay fotito
+    public static MyMatrix4x4 Translate(Vec3 v) // Pongo vector3 pos
     {
         MyMatrix4x4 m;
         m.m00 = 1f;
@@ -391,30 +396,30 @@ public struct MyMatrix4x4 : IEquatable<MyMatrix4x4>
 
     public static MyMatrix4x4 Rotate(MyQuat q) //Es así porque don opengl quiso que fuera así
     {
-        double num1 = q.x * 2f;
-        double num2 = q.y * 2f;
-        double num3 = q.z * 2f;
-        double num4 = q.x * num1;
-        double num5 = q.y * num2;
-        double num6 = q.z * num3;
-        double num7 = q.x * num2;
-        double num8 = q.x * num3;
-        double num9 = q.y * num3;
-        double num10 = q.w * num1;
-        double num11 = q.w * num2;
-        double num12 = q.w * num3;
+        double x = q.x * 2f;
+        double y = q.y * 2f;
+        double z = q.z * 2f;
+        double num4 = q.x * x;
+        double num5 = q.y * y;
+        double num6 = q.z * z;
+        double num7 = q.x * y;
+        double num8 = q.x * z;
+        double num9 = q.y * z;
+        double num10 = q.w * x; //Saco la parte imaginaria
+        double num11 = q.w * y; //Saco la parte imaginaria
+        double num12 = q.w * z; //Saco la parte imaginaria
         MyMatrix4x4 m;
-        m.m00 = (float)(1.0 - num5 + num6);
+        m.m00 = (float)(1.0 - num5 + num6); // Le resto uno para quitar la escala parecido aLossyScale intenta obtener la escala
         m.m10 = (float)(num7 + num12);
         m.m20 = (float)(num8 - num11);
         m.m30 = 0.0f;
         m.m01 = (float)(num7 - num12);
-        m.m11 = (float)(1.0 - num4 + num6);
+        m.m11 = (float)(1.0 - num4 + num6);// Le resto uno para quitar la escala
         m.m21 = (float)(num9 + num10);
         m.m31 = 0.0f;
         m.m02 = (float)(num8 + num11);
         m.m12 = (float)(num9 - num10);
-        m.m22 = (float)(1.0 - num4 + num5);
+        m.m22 = (float)(1.0 - num4 + num5);// Le resto uno para quitar la escala
         m.m32 = 0.0f;
         m.m03 = 0.0f;
         m.m13 = 0.0f;
