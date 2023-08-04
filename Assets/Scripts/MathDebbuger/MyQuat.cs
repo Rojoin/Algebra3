@@ -97,7 +97,7 @@ namespace CustomMath
             return Normalize(toReturn);
         }
         public static MyQuat LookRotation(Vec3 forward, [DefaultValue("Vec3.up")] Vec3 upwards)
-        { https://d3cw3dd2w32x2b.cloudfront.net/wp-content/uploads/2015/01/matrix-to-quat.pdf
+        { //https://d3cw3dd2w32x2b.cloudfront.net/wp-content/uploads/2015/01/matrix-to-quat.pdf
             //Tengo que conseguir la squareRoot de t(1+ la diagonal)
             //Dependiendo de cada caso tengo que cambiar el signo y adecuarme, cambiando en si los componentes
             forward.Normalize();

@@ -222,7 +222,7 @@ public struct MyMatrix4x4 : IEquatable<MyMatrix4x4>
     public static MyMatrix4x4 Inverse(MyMatrix4x4 m) //Devuelve la inversa de la matriz ingresada
     {
         float detA = Determinant(m); //Debe tener determinante, de otra forma, no es inversible
-        if (detA < 0)
+        if (detA ==0)
             return zero;
 
         MyMatrix4x4 aux = new MyMatrix4x4()
@@ -349,7 +349,7 @@ public struct MyMatrix4x4 : IEquatable<MyMatrix4x4>
         }
 
         // Rotation: The upper-left 3x3 submatrix should be an orthogonal matrix
-        Vec3 column0 = new Vec3(m00, m10, m20);
+        Vec3 column0 = new Vec3(m00, m10, m20); //Suma tri tiene que ser ortogonal y que pueda ser euler
         Vec3 column1 = new Vec3(m01, m11, m21);
         Vec3 column2 = new Vec3(m02, m12, m22);
 

@@ -150,7 +150,7 @@ namespace CustomMath
         {
             return Mathf.Sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
         }
-        public static Vec3 Cross(Vec3 a, Vec3 b)
+        public static Vec3 Cross(Vec3 a, Vec3 b) // Vector perpendicular a los dos que le paso en sentido horario
         {
             float i = (a.y * b.z) - (a.z * b.y);
             float j = (a.x * b.z) - (a.z * b.x);
